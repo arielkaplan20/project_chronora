@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chronora — Timepieces of Distinction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #f5f0e8;
+      --parchment: #ede7d9;
+      --gold: #b8922a;
+      --gold-light: #d4aa50;
+      --dark: #1a1612;
+      --charcoal: #2d2820;
+      --warm-gray: #7a7060;
+      --border: rgba(184,146,42,0.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--dark);
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 300;
+      letter-spacing: 0.04em;
+      min-height: 100vh;
+      cursor: default;
+    }
+
+    /* ── CURSOR ── */
+    .cursor {
+      width: 8px; height: 8px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9999;
+      transform: translate(-50%,-50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s;
+    }
+    .cursor-ring {
+      width: 32px; height: 32px;
+      border: 1px solid var(--gold);
+      border-radius: 50%;
+      position: fixed; pointer-events: none; z-index: 9998;
+      transform: translate(-50%,-50%);
+      transition: transform 0.25s ease-out, width 0.3s, height 0.3s, opacity 0.3s;
+      opacity: 0.6;
+    }
+    body:hover .cursor { opacity: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 60px;
+      background: rgba(245,240,232,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: padding 0.3s;
+    }
+    nav.scrolled { padding: 16px 60px; }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links { display: flex; gap: 40px; align-items: center; }
+    .nav-links a {
+      font-size: 11px; font-weight: 400; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--warm-gray);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-actions { display: flex; gap: 20px; align-items: center; }
+    .btn-admin {
+      font-size: 10px; font-weight: 400; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--dark);
+      background: transparent; border: 1px solid var(--border);
+      padding: 10px 24px; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-admin:hover { background: var(--gold); color: white; border-color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      height: 100vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 80px 60px;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 40%, rgba(184,146,42,0.08) 0%, transparent 60%),
+        linear-gradient(170deg, var(--parchment) 0%, var(--cream) 100%);
+    }
+    .hero-decoration {
+      position: absolute; top: 15%; right: 8%;
+      width: 420px; height: 420px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      animation: slowRotate 60s linear infinite;
+    }
+    .hero-decoration::before {
+      content: '';
+      position: absolute; inset: 30px;
+      border: 1px solid rgba(184,146,42,0.12);
+      border-radius: 50%;
+    }
+    .hero-decoration::after {
+      content: '';
+      position: absolute; inset: 60px;
+      border: 1px solid rgba(184,146,42,0.08);
+      border-radius: 50%;
+    }
+    @keyframes slowRotate { to { transform: rotate(360deg); } }
+
+    .hero-tag {
+      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 24px;
+      position: relative; z-index: 1;
+    }
+    .hero-tag::before {
+      content: ''; display: inline-block;
+      width: 40px; height: 1px; background: var(--gold);
+      vertical-align: middle; margin-right: 16px;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 8vw, 110px);
+      font-weight: 300; line-height: 0.95;
+      color: var(--dark); position: relative; z-index: 1;
+      margin-bottom: 32px;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+
+    .hero-sub {
+      font-size: 12px; letter-spacing: 0.15em; color: var(--warm-gray);
+      max-width: 340px; line-height: 2;
+      position: relative; z-index: 1; margin-bottom: 48px;
+    }
+
+    .hero-cta {
+      display: flex; gap: 24px; align-items: center;
+      position: relative; z-index: 1;
+    }
+    .btn-primary {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      background: var(--dark); color: var(--cream);
+      border: none; padding: 16px 48px; cursor: pointer;
+      transition: all 0.4s; position: relative; overflow: hidden;
+    }
+    .btn-primary::after {
+      content: ''; position: absolute; inset: 0;
+      background: var(--gold); transform: translateX(-100%);
+      transition: transform 0.4s;
+    }
+    .btn-primary:hover::after { transform: translateX(0); }
+    .btn-primary span { position: relative; z-index: 1; }
+    .btn-ghost {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--warm-gray); cursor: pointer;
+      background: none; border: none;
+      text-decoration: underline; text-underline-offset: 4px;
+      transition: color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--gold); }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--dark); color: var(--parchment);
+      padding: 12px 0; overflow: hidden;
+    }
+    .ticker-inner {
+      display: flex; gap: 80px; animation: ticker 25s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item {
+      font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+      display: flex; align-items: center; gap: 20px; flex-shrink: 0;
+    }
+    .ticker-item::before { content: '✦'; color: var(--gold); font-size: 8px; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── FILTERS ── */
+    .filters-section {
+      padding: 60px 60px 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .filters-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 32px;
+    }
+    .filters-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px; font-weight: 300;
+    }
+    .results-count {
+      font-size: 11px; color: var(--warm-gray); letter-spacing: 0.15em;
+    }
+
+    .filters-bar {
+      display: flex; gap: 16px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 6px; }
+    .filter-label { font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); }
+    .filter-select, .filter-input {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px; letter-spacing: 0.1em;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--dark); padding: 10px 18px;
+      min-width: 160px; cursor: pointer;
+      transition: border-color 0.3s;
+      appearance: none;
+    }
+    .filter-select:focus, .filter-input:focus {
+      outline: none; border-color: var(--gold);
+    }
+    .filter-input { min-width: 200px; }
+
+    .price-range { display: flex; gap: 8px; align-items: center; }
+    .price-input {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 11px; letter-spacing: 0.1em;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--dark); padding: 10px 14px; width: 110px;
+      transition: border-color 0.3s;
+    }
+    .price-input:focus { outline: none; border-color: var(--gold); }
+    .price-sep { font-size: 10px; color: var(--warm-gray); }
+
+    .btn-filter {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      background: var(--gold); color: white;
+      border: none; padding: 10px 28px; cursor: pointer;
+      transition: background 0.3s; align-self: flex-end;
+    }
+    .btn-filter:hover { background: var(--dark); }
+    .btn-clear {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      background: transparent; color: var(--warm-gray);
+      border: 1px solid var(--border); padding: 10px 28px; cursor: pointer;
+      transition: all 0.3s; align-self: flex-end;
+    }
+    .btn-clear:hover { border-color: var(--dark); color: var(--dark); }
+
+    /* ── GRID ── */
+    .collection-section { padding: 60px; }
+
+    .watch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    @media (max-width: 1100px) {
+      .watch-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .watch-grid { grid-template-columns: 1fr; }
+    }
+
+    .watch-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      position: relative; overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.4s, box-shadow 0.4s;
+    }
+    .watch-card:hover {
+      z-index: 2;
+      box-shadow: 0 20px 60px rgba(26,22,18,0.12);
+      transform: translateY(-4px);
+    }
+
+    .card-img-wrap {
+      aspect-ratio: 1; overflow: hidden;
+      background: var(--parchment);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .watch-card:hover .card-img-wrap img { transform: scale(1.06); }
+
+    .card-placeholder {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px;
+      color: var(--warm-gray);
+    }
+    .card-placeholder svg { opacity: 0.3; }
+    .card-placeholder span { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: rgba(26,22,18,0.7);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px;
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .watch-card:hover .card-overlay { opacity: 1; }
+    .overlay-btn {
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      background: transparent; color: white;
+      border: 1px solid rgba(255,255,255,0.5);
+      padding: 12px 32px; cursor: pointer;
+      transition: all 0.3s;
+    }
+    .overlay-btn:hover { background: var(--gold); border-color: var(--gold); }
+    .overlay-btn.danger:hover { background: #c0392b; border-color: #c0392b; }
+
+    .card-body {
+      padding: 24px 28px;
+      border-top: 1px solid var(--border);
+    }
+    .card-brand {
+      font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 6px;
+    }
+    .card-model {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px; font-weight: 400;
+      color: var(--dark); margin-bottom: 12px;
+    }
+    .card-specs { display: flex; gap: 16px; margin-bottom: 16px; }
+    .card-spec {
+      font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--warm-gray); display: flex; align-items: center; gap: 6px;
+    }
+    .card-spec::before {
+      content: ''; width: 4px; height: 4px;
+      background: var(--border); border-radius: 50%;
+    }
+    .card-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px; font-weight: 300; color: var(--dark);
+    }
+    .card-price small {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 10px; letter-spacing: 0.15em; color: var(--warm-gray);
+      margin-left: 4px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center; padding: 120px 40px;
+      color: var(--warm-gray);
+    }
+    .empty-state h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px; font-weight: 300; margin-bottom: 16px;
+      color: var(--dark);
+    }
+    .empty-state p { font-size: 12px; letter-spacing: 0.1em; }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background: rgba(26,22,18,0.85);
+      z-index: 200; display: flex;
+      align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.4s;
+      backdrop-filter: blur(4px);
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--cream); width: 90%; max-width: 820px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(30px); transition: transform 0.4s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+
+    .modal-header {
+      padding: 36px 48px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px; font-weight: 300;
+    }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--warm-gray); font-size: 24px; line-height: 1;
+      transition: color 0.3s;
+    }
+    .modal-close:hover { color: var(--gold); }
+
+    .modal-body { padding: 36px 48px; }
+    .modal-body.detail { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+
+    .modal-img {
+      aspect-ratio: 1; background: var(--parchment);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .modal-detail-info { display: flex; flex-direction: column; gap: 20px; }
+    .modal-brand { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); }
+    .modal-model { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 300; line-height: 1; }
+    .modal-price { font-family: 'Cormorant Garamond', serif; font-size: 32px; color: var(--dark); }
+
+    .spec-list { display: flex; flex-direction: column; gap: 12px; }
+    .spec-row {
+      display: flex; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+      font-size: 11px; letter-spacing: 0.1em;
+    }
+    .spec-row .label { color: var(--warm-gray); text-transform: uppercase; font-size: 9px; letter-spacing: 0.2em; }
+    .spec-row .val { color: var(--dark); }
+
+    .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+
+    /* FORM MODAL */
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full { grid-column: 1/-1; }
+    .form-group label {
+      font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold);
+    }
+    .form-group input, .form-group select {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 12px; letter-spacing: 0.1em;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--dark); padding: 14px 18px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none; border-color: var(--gold);
+    }
+    .form-group input::placeholder { color: var(--warm-gray); }
+    .form-error { font-size: 10px; color: #c0392b; letter-spacing: 0.1em; }
+
+    .modal-footer {
+      padding: 24px 48px 36px;
+      display: flex; gap: 12px; justify-content: flex-end;
+    }
+
+    /* ── TOAST ── */
+    .toast-container {
+      position: fixed; bottom: 40px; right: 40px;
+      display: flex; flex-direction: column; gap: 12px;
+      z-index: 999;
+    }
+    .toast {
+      background: var(--dark); color: var(--parchment);
+      padding: 16px 28px; font-size: 11px; letter-spacing: 0.15em;
+      border-left: 3px solid var(--gold);
+      transform: translateX(120%); transition: transform 0.4s;
+      max-width: 300px;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.success { border-color: #2ecc71; }
+    .toast.error { border-color: #e74c3c; }
+
+    /* ── LOADER ── */
+    .loader {
+      display: flex; justify-content: center; padding: 80px;
+      grid-column: 1/-1;
+    }
+    .loader-ring {
+      width: 48px; height: 48px;
+      border: 1px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); color: var(--warm-gray);
+      padding: 60px; margin-top: 80px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px; border-top: 1px solid rgba(184,146,42,0.2);
+    }
+    .footer-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px; color: var(--parchment); margin-bottom: 16px;
+    }
+    .footer-brand span { color: var(--gold); }
+    .footer-desc { font-size: 11px; line-height: 2; max-width: 280px; }
+    .footer-col h4 {
+      font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li { font-size: 11px; letter-spacing: 0.1em; cursor: pointer; transition: color 0.3s; }
+    .footer-col ul li:hover { color: var(--parchment); }
+    .footer-bottom {
+      background: var(--charcoal); padding: 20px 60px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .footer-bottom span { font-size: 10px; color: var(--warm-gray); letter-spacing: 0.1em; }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: all 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav, .filters-section, .collection-section { padding-left: 24px; padding-right: 24px; }
+      .hero { padding: 80px 24px 60px; }
+      .hero-decoration { width: 240px; height: 240px; }
+      footer { grid-template-columns: 1fr; padding: 40px 24px; }
+      .modal-body.detail { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">Chron<span>ora</span></a>
+  <div class="nav-links">
+    <a href="#" onclick="filterBrand('')">Collection</a>
+    <a href="#" onclick="filterSmart(false)">Classic</a>
+    <a href="#" onclick="filterSmart(true)">Smart</a>
+    <a href="#">About</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-admin" onclick="openAddModal()">+ Add Watch</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-decoration"></div>
+  <p class="hero-tag">Est. 2025 — Fine Timepieces</p>
+  <h1>Time is<br>an <em>art.</em></h1>
+  <p class="hero-sub">Curated collection of exceptional timepieces crafted for those who appreciate precision and beauty.</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="scrollToCollection()"><span>Explore Collection</span></button>
+    <button class="btn-ghost" onclick="openAddModal()">Add a piece →</button>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner" id="ticker">
+    <div class="ticker-item">Free Shipping on Orders Over $500</div>
+    <div class="ticker-item">Certified Authentic Timepieces</div>
+    <div class="ticker-item">5-Year Mechanical Warranty</div>
+    <div class="ticker-item">Swiss Movement Available</div>
+    <div class="ticker-item">Expert Consultation Service</div>
+    <div class="ticker-item">Free Shipping on Orders Over $500</div>
+    <div class="ticker-item">Certified Authentic Timepieces</div>
+    <div class="ticker-item">5-Year Mechanical Warranty</div>
+    <div class="ticker-item">Swiss Movement Available</div>
+    <div class="ticker-item">Expert Consultation Service</div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<section class="filters-section" id="collection">
+  <div class="filters-header reveal">
+    <h2>The Collection</h2>
+    <span class="results-count" id="resultsCount">Loading...</span>
+  </div>
+  <div class="filters-bar reveal">
+    <div class="filter-group">
+      <span class="filter-label">Search</span>
+      <input type="text" class="filter-input" id="searchInput" placeholder="Brand, model..." oninput="applyFilters()">
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Movement</span>
+      <select class="filter-select" id="movementFilter" onchange="applyFilters()">
+        <option value="">All Movements</option>
+        <option>Automatic</option>
+        <option>Quartz</option>
+        <option>Mechanical</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Material</span>
+      <select class="filter-select" id="materialFilter" onchange="applyFilters()">
+        <option value="">All Materials</option>
+        <option>Steel</option>
+        <option>Gold</option>
+        <option>Titanium</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Price Range</span>
+      <div class="price-range">
+        <input type="number" class="price-input" id="minPrice" placeholder="Min $" oninput="applyFilters()">
+        <span class="price-sep">—</span>
+        <input type="number" class="price-input" id="maxPrice" placeholder="Max $" oninput="applyFilters()">
+      </div>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Sort By</span>
+      <select class="filter-select" id="sortFilter" onchange="applyFilters()">
+        <option value="">Default</option>
+        <option value="price-asc">Price ↑</option>
+        <option value="price-desc">Price ↓</option>
+        <option value="brand">Brand A–Z</option>
+      </select>
+    </div>
+    <button class="btn-clear" onclick="clearFilters()">Clear</button>
+  </div>
+</section>
+
+<!-- GRID -->
+<section class="collection-section">
+  <div class="watch-grid" id="watchGrid">
+    <div class="loader"><div class="loader-ring"></div></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">Chron<span>ora</span></div>
+    <p class="footer-desc">A curated destination for discerning collectors and watch enthusiasts seeking timepieces of lasting significance.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Navigation</h4>
+    <ul>
+      <li>Collection</li>
+      <li>Classic Watches</li>
+      <li>Smart Watches</li>
+      <li>Add a Piece</li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>API Endpoints</h4>
+    <ul>
+      <li>/api/watches/all</li>
+      <li>/api/watches/{id}</li>
+      <li>POST /api/watches</li>
+      <li>PUT /api/watches/{id}</li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 Chronora. All rights reserved.</span>
+  <span>Spring Boot Backend</span>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-backdrop" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="detailTitle">Watch Detail</h2>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body detail" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn-clear" onclick="closeModal('detailModal')">Close</button>
+      <button class="btn-primary" id="detailEditBtn" onclick="editFromDetail()"><span>Edit Watch</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-backdrop" id="formModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="formTitle">Add New Watch</h2>
+      <button class="modal-close" onclick="closeModal('formModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="watchForm" onsubmit="submitForm(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Brand *</label>
+            <input type="text" id="fBrand" placeholder="e.g. Rolex" required minlength="2" maxlength="50">
+            <span class="form-error" id="errBrand"></span>
+          </div>
+          <div class="form-group">
+            <label>Model *</label>
+            <input type="text" id="fModel" placeholder="e.g. Submariner" required minlength="2" maxlength="50">
+            <span class="form-error" id="errModel"></span>
+          </div>
+          <div class="form-group">
+            <label>Price (USD) *</label>
+            <input type="number" id="fPrice" placeholder="e.g. 8500" step="0.01" min="0.01" required>
+            <span class="form-error" id="errPrice"></span>
+          </div>
+          <div class="form-group">
+            <label>Movement</label>
+            <select id="fMovement">
+              <option value="">Select movement</option>
+              <option>Automatic</option>
+              <option>Quartz</option>
+              <option>Mechanical</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Material</label>
+            <select id="fMaterial">
+              <option value="">Select material</option>
+              <option>Steel</option>
+              <option>Gold</option>
+              <option>Titanium</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Image URL</label>
+            <input type="url" id="fImage" placeholder="https://...">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-clear" onclick="closeModal('formModal')">Cancel</button>
+      <button class="btn-primary" onclick="submitForm(event)" id="formSubmitBtn"><span>Save Watch</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h2>Confirm Delete</h2>
+      <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;line-height:2;color:var(--warm-gray);letter-spacing:0.05em;">
+        Are you sure you want to remove <strong id="deleteWatchName" style="color:var(--dark)"></strong> from the collection? This action cannot be undone.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-clear" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-primary" onclick="confirmDelete()" style="background:#c0392b"><span>Delete</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+  const API = 'http://localhost:8080/api/watches';
+  let allWatches = [];
+  let filteredWatches = [];
+  let editingId = null;
+  let deletingId = null;
+  let detailWatch = null;
+
+  // ── CURSOR ──
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top = e.clientY + 'px';
+    }, 80);
+  });
+
+  // ── NAV SCROLL ──
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function scrollToCollection() {
+    document.getElementById('collection').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ── TOAST ──
+  function toast(msg, type = 'success') {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    document.getElementById('toastContainer').appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 400);
+    }, 3500);
+  }
+
+  // ── MODALS ──
+  function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+  document.querySelectorAll('.modal-backdrop').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+  });
+
+  // ── FETCH ALL ──
+  async function loadWatches() {
+    try {
+      const res = await fetch(`${API}/all`);
+      if (!res.ok) throw new Error();
+      allWatches = await res.json();
+      applyFilters();
+    } catch {
+      document.getElementById('watchGrid').innerHTML = `
+        <div class="empty-state">
+          <h3>Connection Error</h3>
+          <p>Cannot reach the Spring Boot server at localhost:8080.<br>Please ensure the backend is running.</p>
+        </div>`;
+      document.getElementById('resultsCount').textContent = 'Offline';
+    }
+  }
+
+  // ── FILTERS ──
+  function applyFilters() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const movement = document.getElementById('movementFilter').value;
+    const material = document.getElementById('materialFilter').value;
+    const minP = parseFloat(document.getElementById('minPrice').value) || 0;
+    const maxP = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+    const sort = document.getElementById('sortFilter').value;
+
+    filteredWatches = allWatches.filter(w => {
+      const matchSearch = !search ||
+        (w.brand || '').toLowerCase().includes(search) ||
+        (w.model || '').toLowerCase().includes(search);
+      const matchMovement = !movement || w.movement === movement;
+      const matchMaterial = !material || w.material === material;
+      const matchPrice = w.price >= minP && w.price <= maxP;
+      return matchSearch && matchMovement && matchMaterial && matchPrice;
+    });
+
+    if (sort === 'price-asc') filteredWatches.sort((a,b) => a.price - b.price);
+    else if (sort === 'price-desc') filteredWatches.sort((a,b) => b.price - a.price);
+    else if (sort === 'brand') filteredWatches.sort((a,b) => (a.brand||'').localeCompare(b.brand||''));
+
+    renderGrid();
+  }
+
+  function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('movementFilter').value = '';
+    document.getElementById('materialFilter').value = '';
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    document.getElementById('sortFilter').value = '';
+    applyFilters();
+  }
+
+  function filterBrand(brand) {
+    document.getElementById('searchInput').value = brand;
+    applyFilters();
+    scrollToCollection();
+  }
+  function filterSmart(val) { scrollToCollection(); }
+
+  // ── RENDER GRID ──
+  function renderGrid() {
+    const grid = document.getElementById('watchGrid');
+    document.getElementById('resultsCount').textContent =
+      `${filteredWatches.length} piece${filteredWatches.length !== 1 ? 's' : ''}`;
+
+    if (!filteredWatches.length) {
+      grid.innerHTML = `<div class="empty-state"><h3>No timepieces found</h3><p>Try adjusting your filters or add a new watch to the collection.</p></div>`;
+      return;
+    }
+
+    // Build cards using DOM (not innerHTML) to avoid escaping issues with onerror
+    grid.innerHTML = '';
+    filteredWatches.forEach(w => {
+      const card = document.createElement('div');
+      card.className = 'watch-card reveal';
+      card.onclick = () => openDetail(w.id);
+
+      // Image wrapper
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'card-img-wrap';
+
+      if (w.image) {
+        const img = document.createElement('img');
+        img.alt = `${w.brand} ${w.model}`;
+        img.src = w.image;
+        img.onerror = function() {
+          this.replaceWith(makePlaceholder());
+        };
+        imgWrap.appendChild(img);
+      } else {
+        imgWrap.appendChild(makePlaceholder());
+      }
+
+      // Overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'card-overlay';
+      overlay.innerHTML = `
+        <button class="overlay-btn" onclick="event.stopPropagation(); openDetail(${w.id})">View Details</button>
+        <button class="overlay-btn" onclick="event.stopPropagation(); openEditModal(${w.id})">Edit</button>
+        <button class="overlay-btn danger" onclick="event.stopPropagation(); openDeleteModal(${w.id})">Remove</button>
+      `;
+      imgWrap.appendChild(overlay);
+
+      // Body
+      const body = document.createElement('div');
+      body.className = 'card-body';
+      body.innerHTML = `
+        <div class="card-brand">${escHtml(w.brand)}</div>
+        <div class="card-model">${escHtml(w.model)}</div>
+        <div class="card-specs">
+          ${w.movement ? `<span class="card-spec">${escHtml(w.movement)}</span>` : ''}
+          ${w.material ? `<span class="card-spec">${escHtml(w.material)}</span>` : ''}
+        </div>
+        <div class="card-price">$${formatPrice(w.price)}<small>USD</small></div>
+      `;
+
+      card.appendChild(imgWrap);
+      card.appendChild(body);
+      grid.appendChild(card);
+      observer.observe(card);
+    });
+  }
+
+  function makePlaceholder() {
+    const div = document.createElement('div');
+    div.className = 'card-placeholder';
+    div.innerHTML = `<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+      <circle cx="12" cy="12" r="7"/><polyline points="12 9 12 12 13.5 13.5"/>
+      <rect x="9" y="1" width="6" height="4" rx="1"/><rect x="9" y="19" width="6" height="4" rx="1"/>
+    </svg><span>No Image</span>`;
+    return div;
+  }
+
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function formatPrice(p) { return Number(p).toLocaleString('en-US', { minimumFractionDigits: 0 }); }
+
+  // ── DETAIL MODAL ──
+  function openDetail(id) {
+    detailWatch = allWatches.find(w => w.id === id);
+    if (!detailWatch) return;
+    document.getElementById('detailTitle').textContent = `${detailWatch.brand} ${detailWatch.model}`;
+    document.getElementById('detailBody').innerHTML = `
+      <div class="modal-img">
+        ${detailWatch.image
+          ? `<img src="${escHtml(detailWatch.image)}" alt="${escHtml(detailWatch.brand)}" onerror="this.style.display='none'">`
+          : ''}
+      </div>
+      <div class="modal-detail-info">
+        <div>
+          <div class="modal-brand">${escHtml(detailWatch.brand)}</div>
+          <div class="modal-model">${escHtml(detailWatch.model)}</div>
+        </div>
+        <div class="modal-price">$${formatPrice(detailWatch.price)} <small style="font-family:'Josefin Sans';font-size:12px;color:var(--warm-gray)">USD</small></div>
+        <div class="spec-list">
+          <div class="spec-row"><span class="label">ID</span><span class="val">#${detailWatch.id}</span></div>
+          ${detailWatch.movement ? `<div class="spec-row"><span class="label">Movement</span><span class="val">${escHtml(detailWatch.movement)}</span></div>` : ''}
+          ${detailWatch.material ? `<div class="spec-row"><span class="label">Material</span><span class="val">${escHtml(detailWatch.material)}</span></div>` : ''}
+        </div>
+        <div class="modal-actions">
+          <button class="btn-clear" onclick="openDeleteModal(${detailWatch.id}); closeModal('detailModal')">Remove</button>
+        </div>
+      </div>
+    `;
+    openModal('detailModal');
+  }
+
+  function editFromDetail() {
+    if (!detailWatch) return;
+    closeModal('detailModal');
+    openEditModal(detailWatch.id);
+  }
+
+  // ── ADD MODAL ──
+  function openAddModal() {
+    editingId = null;
+    document.getElementById('formTitle').textContent = 'Add New Watch';
+    document.getElementById('formSubmitBtn').querySelector('span').textContent = 'Save Watch';
+    document.getElementById('watchForm').reset();
+    clearFormErrors();
+    openModal('formModal');
+  }
+
+  function openEditModal(id) {
+    const w = allWatches.find(x => x.id === id);
+    if (!w) return;
+    editingId = id;
+    document.getElementById('formTitle').textContent = 'Edit Watch';
+    document.getElementById('formSubmitBtn').querySelector('span').textContent = 'Update Watch';
+    document.getElementById('fBrand').value = w.brand || '';
+    document.getElementById('fModel').value = w.model || '';
+    document.getElementById('fPrice').value = w.price || '';
+    document.getElementById('fMovement').value = w.movement || '';
+    document.getElementById('fMaterial').value = w.material || '';
+    document.getElementById('fImage').value = w.image || '';
+    clearFormErrors();
+    openModal('formModal');
+  }
+
+  function clearFormErrors() {
+    ['Brand','Model','Price'].forEach(f => {
+      document.getElementById(`err${f}`).textContent = '';
+    });
+  }
+
+  async function submitForm(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    clearFormErrors();
+
+    const data = {
+      brand: document.getElementById('fBrand').value.trim(),
+      model: document.getElementById('fModel').value.trim(),
+      price: parseFloat(document.getElementById('fPrice').value),
+      movement: document.getElementById('fMovement').value || null,
+      material: document.getElementById('fMaterial').value || null,
+      image: document.getElementById('fImage').value.trim() || null,
+    };
+
+    let valid = true;
+    if (!data.brand || data.brand.length < 2) { document.getElementById('errBrand').textContent = 'Min 2 characters'; valid = false; }
+    if (!data.model || data.model.length < 2) { document.getElementById('errModel').textContent = 'Min 2 characters'; valid = false; }
+    if (!data.price || data.price <= 0) { document.getElementById('errPrice').textContent = 'Must be greater than 0'; valid = false; }
+    if (!valid) return;
+
+    const btn = document.getElementById('formSubmitBtn');
+    btn.querySelector('span').textContent = 'Saving...';
+    btn.disabled = true;
+
+    try {
+      const url = editingId ? `${API}/${editingId}` : API;
+      const method = editingId ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method, headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error();
+      closeModal('formModal');
+      toast(editingId ? 'Watch updated successfully' : 'Watch added to collection', 'success');
+      await loadWatches();
+    } catch {
+      toast('Failed to save watch. Check backend connection.', 'error');
+    } finally {
+      btn.querySelector('span').textContent = editingId ? 'Update Watch' : 'Save Watch';
+      btn.disabled = false;
+    }
+  }
+
+  // ── DELETE ──
+  function openDeleteModal(id) {
+    deletingId = id;
+    const w = allWatches.find(x => x.id === id);
+    document.getElementById('deleteWatchName').textContent = w ? `${w.brand} ${w.model}` : `Watch #${id}`;
+    openModal('deleteModal');
+  }
+
+  async function confirmDelete() {
+    try {
+      const res = await fetch(`${API}/${deletingId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      closeModal('deleteModal');
+      toast('Watch removed from collection', 'success');
+      await loadWatches();
+    } catch {
+      toast('Failed to delete watch.', 'error');
+    }
+  }
+
+  // ── INIT ──
+  loadWatches();
+</script>
+</body>
+</html>
