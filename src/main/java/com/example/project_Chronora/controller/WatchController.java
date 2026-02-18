@@ -66,7 +66,7 @@ public class WatchController {
     }
 
     @GetMapping("/model/{model}")
-    public ResponseEntity<?> findByModel(@PathVariable String model)
+    public ResponseEntity<?> findByModel(@PathVariable String model) {
         return new ResponseEntity<>(watchService.findByModel(model), HttpStatus.OK);
     }
 
