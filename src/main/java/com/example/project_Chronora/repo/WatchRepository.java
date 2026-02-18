@@ -12,7 +12,7 @@ public interface WatchRepository extends CrudRepository<Watch, Long> {
     Iterable<Watch> findByModel(String model);
 
 
-    Iterable<Watch> findByPrice(Double price
+    Iterable<Watch> findByPrice(Double price);
 
     Iterable<Watch> findByBrandAndModel(String brand, String model);
 

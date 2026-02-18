@@ -43,7 +43,7 @@ public class WatchService {
 
 
         public Iterable<Watch> findByModel(String model) {
-            return repository.findByModel(model
+            return repository.findByModel(model);
         }
 
 
