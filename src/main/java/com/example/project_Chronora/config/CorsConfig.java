@@ -11,7 +11,7 @@ public class CorsConfig {
 
     @Bean
     public CorsFilter corsFilter() {
-        CorsConfiguration config = new CorsConfiguration();
+        CorsConfiguration config = new CorsConfiguration()
 
         config.setAllowCredentials(false);
         config.addAllowedOriginPattern("*");   // כל origin מותר — ניתן להגביל ל-"http://localhost:63342"
